@@ -44,4 +44,24 @@ The solution was found but not without hiccups. It did reqiure inputing admin pa
 sudo ddccontrol -r 0x60 -w 6927 dev:/dev/i2c-10 > /dev/null 2> /dev/null
 ```
 
-This application/hack is partially based the forum post by  and the post by Ashark here https://unix.stackexchange.com/questions/703048/how-do-i-run-a-sudo-command-from-kde-shortcuts-command 
+I adopted pretty the same C code as the author of the post https://www.dell.com/community/en/conversations/monitors/u2723qe-kvm-using-a-keyboard-shortcut-to-switch-in-linux/647fa06af4ccf8a8de56ccc8:
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+    
+int main()
+{
+    setuid(0);
+    system("sudo ddccontrol -r 0x60 -w 6927 dev:/dev/i2c-10 > /dev/null 2> /dev/null");
+    return 0;
+}
+```
+Compiled, built and changed permissions to allow launcing it without admin permissions:
+```
+gcc monitor_switch.c -o monitor_switch
+sudo chown root:root monitor_switch
+sudo chmod 7455 monitor_switch
+```
+In addition, I used to following recipe https://unix.stackexchange.com/questions/703048/how-do-i-run-a-sudo-command-from-kde-shortcuts-command to add a shortcut to my KDE environment to be able to run the utility by pressing a few keys on a keyboard.
